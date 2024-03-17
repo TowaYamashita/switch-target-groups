@@ -36,6 +36,11 @@ class BlueGreen {
     }
   }
 
+  private function getTargetGroupNameFromArn(string $targetGroupArn){
+    $tmp = explode('/', $targetGroupArn);
+    return $tmp[count($tmp) - 2];
+  }
+
   public function deployNewEnvironment(){
     // テスト環境 AutoScalingグループの 最小、最大、希望キャパシティを増やす
   }
@@ -78,8 +83,7 @@ class BlueGreen {
   
     // 本番環境 -> テスト環境
     foreach($rulesForProd as $ruleForProd){
-      $tmp = explode('/', $ruleForProd['Actions'][0]['TargetGroupArn']);
-      $targetGroupName = $tmp[count($tmp) - 2];
+      $targetGroupName = $this->getTargetGroupNameFromArn($ruleForProd['Actions'][0]['TargetGroupArn']);
       $replaced = $this->getSwapTargetGroupName($targetGroupName);
       $targetGroupArn = $targetGroupsForTest[$replaced];
       if($ruleForProd['IsDefault']) {
@@ -107,8 +111,7 @@ class BlueGreen {
   
     // テスト環境 -> 本番環境
     foreach($rulesForTest as $ruleForTest){
-      $tmp = explode('/', $ruleForTest['Actions'][0]['TargetGroupArn']);
-      $targetGroupName = $tmp[count($tmp) - 2];
+      $targetGroupName = $this->getTargetGroupNameFromArn($ruleForTest['Actions'][0]['TargetGroupArn']);
       $replaced = $this->getSwapTargetGroupName($targetGroupName);
       $targetGroupArn = $targetGroupsForProd[$replaced];
       if($ruleForTest['IsDefault']){
