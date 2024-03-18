@@ -2,16 +2,17 @@
 
 AWS ALB の リスナーに紐づいたターゲットグループを入れ替えるコード
 
-# Environment
+# Usage
 
 ```shell
-$ php --version
-PHP 7.4.33 (cli) (built: Nov 19 2022 00:22:13) ( NTS )
-Copyright (c) The PHP Group
-Zend Engine v3.4.0, Copyright (c) Zend Technologies
+php command.php <ロードバランサーの名前> <boot|healthcheck|swap|destroy>
 
-$ composer --version
-Composer version 2.7.2 2024-03-11 17:12:18
-PHP version 7.4.33 (/usr/bin/php)
-Run the "diagnose" command to get more detailed diagnostics output.
+boot: 本番環境のターゲットグループの最小/最大/希望サイズと同じ値を使って、テスト環境を起動する
+healthcheck: 本番環境とテスト環境の各ターゲットグループのヘルスチェックの状態を表示する
+swap: 本番環境とテスト環境のリスナーグループを入れ替える
+destroy: テスト環境の各ターゲットグループの最小/最大/希望サイズをすべて0にする
 ```
+
+# 補足
+- このコードをEC2インスタンスで実行する際には、 docs/0-iam-policy.md の内容で作成した IAMインスタンスプロファイルを EC2インスタンスに割り当てること
+- 本番環境のターゲットグループ名とAutoScalingグループ名、テスト環境のターゲットグループ名とAutoScalingグループ名が同じであることが前提です。
